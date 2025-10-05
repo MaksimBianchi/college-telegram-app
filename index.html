@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Assistant - Telegram Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #333;
+        }
+        
+        .card h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+        
+        .time {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 80px;
+        }
+        
+        .subject {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+        
+        .duty-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .duty-item:before {
+            content: "👤";
+        }
+        
+        .game-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            border-radius: 15px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        
+        .game-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status-bar {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 College Assistant</h1>
+            <p id="welcomeText">Ваш помощник в колледже</p>
+        </div>
+        
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('schedule')">📅</button>
+            <button class="tab-button" onclick="showTab('duty')">👥</button>
+            <button class="tab-button" onclick="showTab('bells')">⏰</button>
+            <button class="tab-button" onclick="showTab('games')">🎮</button>
+        </div>
+        
+        <!-- Вкладка Расписание -->
+        <div id="schedule" class="card">
+            <h2>📅 Расписание на сегодня</h2>
+            <div class="schedule-item">
+                <span class="time">8:45-10:05</span>
+                <span class="subject">Математика</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">10:25-11:45</span>
+                <span class="subject">Физика</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">12:05-13:25</span>
+                <span class="subject">Программирование</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">13:55-14:55</span>
+                <span class="subject">Английский язык</span>
+            </div>
+        </div>
+        
+        <!-- Вкладка Дежурные -->
+        <div id="duty" class="card hidden">
+            <h2>👥 Дежурные сегодня</h2>
+            <div class="duty-item">Артюхов Савелий</div>
+            <div class="duty-item">Бесков Артем</div>
+            <div class="duty-item">Бисингалиев Рашид</div>
+        </div>
+        
+        <!-- Вкладка Звонки -->
+        <div id="bells" class="card hidden">
+            <h2>⏰ Расписание звонков</h2>
+            <div class="schedule-item">
+                <span class="time">8:45-10:05</span>
+                <span class="subject">1 пара</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">10:25-11:45</span>
+                <span class="subject">2 пара</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">12:05-13:25</span>
+                <span class="subject">3 пара</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">13:55-14:55</span>
+                <span class="subject">4 пара</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">15:05-16:25</span>
+                <span class="subject">5 пара</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">16:35-17:55</span>
+                <span class="subject">6 пара</span>
+            </div>
+        </div>
+        
+        <!-- Вкладка Игры -->
+        <div id="games" class="card hidden">
+            <h2>🎮 Мини-игры</h2>
+            <button class="game-button" onclick="playGuessGame()">🎯 Угадай число</button>
+            <button class="game-button" onclick="rollDice()">🎲 Бросить кости</button>
+            <button class="game-button" onclick="playRPS()">✂️ Камень-Ножницы-Бумага</button>
+        </div>
+        
+        <div class="status-bar" id="status">
+            College Assistant v1.0 • Telegram Mini App
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        let tg = window.Telegram.WebApp;
+        
+        // Расширяем на весь экран
+        tg.expand();
+        
+        // Устанавливаем цвет фона
+        tg.setBackgroundColor('#667eea');
+        
+        // Получаем информацию о пользователе
+        const user = tg.initDataUnsafe.user;
+        if (user) {
+            document.getElementById('welcomeText').textContent = `Привет, ${user.first_name}!`;
+        }
+        
+        // Функции для вкладок
+        function showTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.add('hidden');
+            });
+            
+            // Убираем активный класс со всех кнопок
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById(tabName).classList.remove('hidden');
+            
+            // Активируем кнопку
+            event.target.classList.add('active');
+        }
+        
+        // Функции игр
+        function playGuessGame() {
+            const number = Math.floor(Math.random() * 10) + 1;
+            alert(`🎯 Я загадал число от 1 до 10!\nПопробуй угадать!`);
+        }
+        
+        function rollDice() {
+            const dice1 = Math.floor(Math.random() * 6) + 1;
+            const dice2 = Math.floor(Math.random() * 6) + 1;
+            alert(`🎲 Бросок костей:\nВыпало: ${dice1} и ${dice2}\nСумма: ${dice1 + dice2}`);
+        }
+        
+        function playRPS() {
+            const choices = ['камень', 'ножницы', 'бумага'];
+            const userChoice = prompt('Выбери: камень, ножницы или бумага');
+            if (userChoice && choices.includes(userChoice.toLowerCase())) {
+                const botChoice = choices[Math.floor(Math.random() * 3)];
+                let result;
+                
+                if (userChoice === botChoice) {
+                    result = "🤝 Ничья!";
+                } else if (
+                    (userChoice === 'камень' && botChoice === 'ножницы') ||
+                    (userChoice === 'ножницы' && botChoice === 'бумага') ||
+                    (userChoice === 'бумага' && botChoice === 'камень')
+                ) {
+                    result = "🎉 Ты выиграл!";
+                } else {
+                    result = "😢 Я выиграл!";
+                }
+                
+                alert(`👤 Ты: ${userChoice}\n🤖 Бот: ${botChoice}\n${result}`);
+            } else {
+                alert('Пожалуйста, выбери: камень, ножницы или бумага');
+            }
+        }
+        
+        // Отправка данных в бота
+        function sendDataToBot(data) {
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify(data));
+            }
+        }
+        
+        // Показываем текущее время
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('status').textContent = 
+                `Обновлено: ${now.toLocaleTimeString()} • College Assistant v1.0`;
+        }
+        
+        setInterval(updateTime, 60000);
+        updateTime();
+        
+        console.log('Telegram Mini App loaded successfully!');
+    </script>
+</body>
+</html>
