@@ -68,8 +68,8 @@
         
         .tab-button {
             flex: 1;
-            min-width: 70px;
-            padding: 12px 8px;
+            min-width: 60px;
+            padding: 12px 6px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 15px;
@@ -77,7 +77,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 12px;
+            font-size: 11px;
         }
         
         .tab-button.active {
@@ -169,6 +169,10 @@
             background: linear-gradient(135deg, #4CAF50, #45a049);
         }
         
+        .bells-button {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+        
         .action-button:hover {
             transform: scale(1.02);
         }
@@ -195,6 +199,15 @@
             font-size: 14px;
         }
         
+        .bells-info {
+            background: #fff3e0;
+            border-left: 4px solid #FF9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
         .loading {
             text-align: center;
             padding: 30px;
@@ -208,6 +221,29 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .bell-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .bell-item:last-child {
+            border-bottom: none;
+        }
+        
+        .bell-number {
+            font-weight: bold;
+            color: #FF9800;
+            min-width: 60px;
+        }
+        
+        .bell-time {
+            flex-grow: 1;
             margin-left: 10px;
         }
     </style>
@@ -225,6 +261,7 @@
             <button class="tab-button active" onclick="showTab('today')">📅 Сегодня</button>
             <button class="tab-button" onclick="showTab('week')">📋 Неделя</button>
             <button class="tab-button" onclick="showTab('duty')">👥 Дежурные</button>
+            <button class="tab-button" onclick="showTab('bells')">⏰ Звонки</button>
             <button class="tab-button" onclick="showTab('netcity')">🌐 Сетевой</button>
             <button class="tab-button" onclick="showTab('games')">🎮 Игры</button>
         </div>
@@ -250,6 +287,23 @@
             <h2>👥 Дежурные на неделю</h2>
             <div id="weekDuties" class="loading">
                 Загрузка списка дежурных...
+            </div>
+        </div>
+        
+        <!-- Вкладка Звонки -->
+        <div id="bells" class="card hidden">
+            <h2>⏰ Расписание звонков</h2>
+            <div class="bells-info">
+                <strong>Разное расписание для будней и субботы:</strong>
+                <br>• 📅 Понедельник-Пятница - 6 пар
+                <br>• 🏫 Суббота - 6 пар (укороченные)  
+                <br>• 🎉 Воскресенье - выходной
+            </div>
+            <button class="action-button bells-button" onclick="showTodayBells()">
+                ⏰ ПОКАЗАТЬ ЗВОНКИ НА СЕГОДНЯ
+            </button>
+            <div id="bellsSchedule" class="loading">
+                Нажмите кнопку для показа расписания звонков
             </div>
         </div>
         
@@ -342,6 +396,26 @@
             "Воскресенье": []
         };
 
+        // Расписание звонков
+        const bellsSchedule = {
+            "weekdays": [  // Понедельник-Пятница
+                {"lesson": 1, "time": "8:45 - 10:05"},
+                {"lesson": 2, "time": "10:25 - 11:45"},
+                {"lesson": 3, "time": "12:05 - 13:25"},
+                {"lesson": 4, "time": "13:55 - 14:55"},
+                {"lesson": 5, "time": "15:05 - 16:25"},
+                {"lesson": 6, "time": "16:35 - 17:55"}
+            ],
+            "saturday": [  // Суббота
+                {"lesson": 1, "time": "8:45 - 10:00"},
+                {"lesson": 2, "time": "10:10 - 11:25"},
+                {"lesson": 3, "time": "11:35 - 12:50"},
+                {"lesson": 4, "time": "13:00 - 14:15"},
+                {"lesson": 5, "time": "14:25 - 15:50"},
+                {"lesson": 6, "time": "16:00 - 17:15"}
+            ]
+        };
+
         // Функции для вкладок
         function showTab(tabName) {
             // Скрываем все вкладки
@@ -364,6 +438,7 @@
             if (tabName === 'today') updateTodayTab();
             if (tabName === 'week') updateWeekTab();
             if (tabName === 'duty') updateDutyTab();
+            if (tabName === 'bells') updateBellsTab();
         }
 
         function updateTodayTab() {
@@ -468,6 +543,100 @@
             document.getElementById('weekDuties').classList.remove('loading');
         }
 
+        function updateBellsTab() {
+            // Показываем общую информацию о расписании
+            let bellsHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #FF9800; margin-bottom: 10px;">📅 Будни (Пн-Пт)</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                        6 пар по 80 минут с переменами
+                    </p>
+                    
+                    <h3 style="color: #FF9800; margin-bottom: 10px;">🏫 Суббота</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                        6 пар по 75 минут с переменами
+                    </p>
+                    
+                    <h3 style="color: #FF9800; margin-bottom: 10px;">🎉 Воскресенье</h3>
+                    <p style="font-size: 14px; color: #666;">
+                        Выходной день
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('bellsSchedule').innerHTML = bellsHTML;
+            document.getElementById('bellsSchedule').classList.remove('loading');
+        }
+
+        function showTodayBells() {
+            const now = new Date();
+            const today = now.getDay(); // 0 - воскресенье, 6 - суббота
+            let scheduleType, scheduleName, schedule;
+            
+            if (today === 0) { // Воскресенье
+                scheduleName = "Воскресенье";
+                schedule = [];
+            } else if (today === 6) { // Суббота
+                scheduleName = "Суббота";
+                schedule = bellsSchedule.saturday;
+                scheduleType = "saturday";
+            } else { // Будни (Пн-Пт)
+                scheduleName = "Будни";
+                schedule = bellsSchedule.weekdays;
+                scheduleType = "weekdays";
+            }
+            
+            let bellsHTML = '';
+            
+            if (scheduleName === "Воскресенье") {
+                bellsHTML = `
+                    <div style="text-align: center; padding: 30px; color: #666;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
+                        <strong style="font-size: 16px;">${scheduleName} - ВЫХОДНОЙ</strong><br>
+                        <span style="font-size: 14px;">Отдыхаем!</span>
+                    </div>
+                `;
+            } else {
+                bellsHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <h3 style="color: #FF9800; text-align: center;">⏰ ${scheduleName}</h3>
+                        <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 15px;">
+                            ${scheduleType === 'weekdays' ? '6 пар по 80 минут' : '6 пар по 75 минут'}
+                        </p>
+                    </div>
+                `;
+                
+                schedule.forEach(bell => {
+                    bellsHTML += `
+                        <div class="bell-item">
+                            <span class="bell-number">${bell.lesson} пара</span>
+                            <span class="bell-time">${bell.time}</span>
+                        </div>
+                    `;
+                });
+                
+                // Добавляем информацию о другом расписании
+                const otherSchedule = scheduleType === 'weekdays' ? bellsSchedule.saturday : bellsSchedule.weekdays;
+                const otherName = scheduleType === 'weekdays' ? 'Суббота' : 'Будни (Пн-Пт)';
+                
+                bellsHTML += `
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #eee;">
+                        <h4 style="color: #666; margin-bottom: 10px;">📅 ${otherName}:</h4>
+                        ${otherSchedule.slice(0, 3).map(bell => `
+                            <div style="font-size: 13px; color: #888; margin: 5px 0;">
+                                ${bell.lesson} пара: ${bell.time}
+                            </div>
+                        `).join('')}
+                        <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                            и ещё ${otherSchedule.length - 3} пар...
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('bellsSchedule').innerHTML = bellsHTML;
+        }
+
         // Функция открытия Сетевого города
         function openNetCity() {
             const netcityUrl = "https://spo.rso23.ru/security/#/login";
@@ -519,6 +688,7 @@
             updateTodayTab();
             updateWeekTab();
             updateDutyTab();
+            updateBellsTab();
             
             // Обновляем статус
             updateStatus();
