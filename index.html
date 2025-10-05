@@ -27,30 +27,62 @@
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px 0;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
         }
         
         .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
         
-        .header p {
-            opacity: 0.9;
+        .today-info {
             font-size: 16px;
+            opacity: 0.9;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            flex: 1;
+            min-width: 70px;
+            padding: 10px 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+        
+        .tab-button.active {
+            background: white;
+            color: #667eea;
         }
         
         .card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             color: #333;
         }
         
@@ -60,29 +92,7 @@
             gap: 10px;
             margin-bottom: 15px;
             color: #667eea;
-        }
-        
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .tab-button {
-            flex: 1;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-button.active {
-            background: white;
-            color: #667eea;
+            font-size: 18px;
         }
         
         .schedule-item {
@@ -99,44 +109,74 @@
         .time {
             font-weight: bold;
             color: #667eea;
-            min-width: 80px;
+            min-width: 85px;
+            font-size: 14px;
         }
         
         .subject {
             flex-grow: 1;
-            margin-left: 15px;
+            margin-left: 10px;
+            font-size: 14px;
         }
         
         .duty-item {
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-size: 14px;
         }
         
         .duty-item:before {
             content: "👤";
         }
         
+        .day-card {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            color: #333;
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .sunday {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+        
+        .sunday .day-header {
+            color: white;
+        }
+        
         .game-button {
             display: block;
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             text-align: center;
-            border-radius: 15px;
+            border-radius: 12px;
             text-decoration: none;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border: none;
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.3s ease;
+            font-size: 14px;
         }
         
         .game-button:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
         
         .hidden {
@@ -145,11 +185,11 @@
         
         .status-bar {
             text-align: center;
-            margin-top: 20px;
-            padding: 10px;
+            margin-top: 15px;
+            padding: 8px;
             background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -157,43 +197,41 @@
     <div class="container">
         <div class="header">
             <h1>🎓 College Assistant</h1>
-            <p id="welcomeText">Ваш помощник в колледже</p>
+            <div class="today-info" id="todayInfo">
+                Загрузка...
+            </div>
         </div>
         
         <div class="tab-buttons">
-            <button class="tab-button active" onclick="showTab('schedule')">📅</button>
-            <button class="tab-button" onclick="showTab('duty')">👥</button>
-            <button class="tab-button" onclick="showTab('bells')">⏰</button>
-            <button class="tab-button" onclick="showTab('games')">🎮</button>
+            <button class="tab-button active" onclick="showTab('today')">📅 Сегодня</button>
+            <button class="tab-button" onclick="showTab('week')">📋 Неделя</button>
+            <button class="tab-button" onclick="showTab('duty')">👥 Дежурные</button>
+            <button class="tab-button" onclick="showTab('bells')">⏰ Звонки</button>
+            <button class="tab-button" onclick="showTab('games')">🎮 Игры</button>
         </div>
         
-        <!-- Вкладка Расписание -->
-        <div id="schedule" class="card">
-            <h2>📅 Расписание на сегодня</h2>
-            <div class="schedule-item">
-                <span class="time">8:45-10:05</span>
-                <span class="subject">Математика</span>
+        <!-- Вкладка Сегодня -->
+        <div id="today" class="card">
+            <h2>📅 Сегодня</h2>
+            <div id="todaySchedule">
+                Загрузка расписания...
             </div>
-            <div class="schedule-item">
-                <span class="time">10:25-11:45</span>
-                <span class="subject">Физика</span>
-            </div>
-            <div class="schedule-item">
-                <span class="time">12:05-13:25</span>
-                <span class="subject">Программирование</span>
-            </div>
-            <div class="schedule-item">
-                <span class="time">13:55-14:55</span>
-                <span class="subject">Английский язык</span>
+        </div>
+        
+        <!-- Вкладка Неделя -->
+        <div id="week" class="card hidden">
+            <h2>📋 Расписание на неделю</h2>
+            <div id="weekSchedule">
+                Загрузка расписания...
             </div>
         </div>
         
         <!-- Вкладка Дежурные -->
         <div id="duty" class="card hidden">
-            <h2>👥 Дежурные сегодня</h2>
-            <div class="duty-item">Артюхов Савелий</div>
-            <div class="duty-item">Бесков Артем</div>
-            <div class="duty-item">Бисингалиев Рашид</div>
+            <h2>👥 Дежурные на неделю</h2>
+            <div id="weekDuties">
+                Загрузка дежурных...
+            </div>
         </div>
         
         <!-- Вкладка Звонки -->
@@ -201,27 +239,25 @@
             <h2>⏰ Расписание звонков</h2>
             <div class="schedule-item">
                 <span class="time">8:45-10:05</span>
-                <span class="subject">1 пара</span>
+                <span class="subject">1 пара (Пн-Пт)</span>
+            </div>
+            <div class="schedule-item">
+                <span class="time">8:45-10:00</span>
+                <span class="subject">1 пара (Сб)</span>
             </div>
             <div class="schedule-item">
                 <span class="time">10:25-11:45</span>
-                <span class="subject">2 пара</span>
+                <span class="subject">2 пара (Пн-Пт)</span>
             </div>
             <div class="schedule-item">
-                <span class="time">12:05-13:25</span>
-                <span class="subject">3 пара</span>
+                <span class="time">10:10-11:25</span>
+                <span class="subject">2 пара (Сб)</span>
             </div>
-            <div class="schedule-item">
-                <span class="time">13:55-14:55</span>
-                <span class="subject">4 пара</span>
-            </div>
-            <div class="schedule-item">
-                <span class="time">15:05-16:25</span>
-                <span class="subject">5 пара</span>
-            </div>
-            <div class="schedule-item">
-                <span class="time">16:35-17:55</span>
-                <span class="subject">6 пара</span>
+            <div class="day-card sunday">
+                <div class="day-header">
+                    <span>Воскресенье</span>
+                    <span>🎉 ВЫХОДНОЙ</span>
+                </div>
             </div>
         </div>
         
@@ -234,57 +270,178 @@
         </div>
         
         <div class="status-bar" id="status">
-            College Assistant v1.0 • Telegram Mini App
+            College Assistant • Расписание на неделю
         </div>
     </div>
 
     <script>
         // Инициализация Telegram Web App
         let tg = window.Telegram.WebApp;
-        
-        // Расширяем на весь экран
         tg.expand();
-        
-        // Устанавливаем цвет фона
         tg.setBackgroundColor('#667eea');
         
-        // Получаем информацию о пользователе
-        const user = tg.initDataUnsafe.user;
-        if (user) {
-            document.getElementById('welcomeText').textContent = `Привет, ${user.first_name}!`;
-        }
-        
+        // Данные расписания
+        const weekSchedule = {
+            "Понедельник": [
+                {"time": "8:45-10:05", "subject": "Математика", "teacher": "Иванов И.И.", "room": "101"},
+                {"time": "10:25-11:45", "subject": "Физика", "teacher": "Петрова А.С.", "room": "205"},
+                {"time": "12:05-13:25", "subject": "Программирование", "teacher": "Сидоров П.К.", "room": "310"}
+            ],
+            "Вторник": [
+                {"time": "8:45-10:05", "subject": "Базы данных", "teacher": "Федоров С.М.", "room": "210"},
+                {"time": "10:25-11:45", "subject": "Веб-разработка", "teacher": "Николаев А.П.", "room": "315"},
+                {"time": "12:05-13:25", "subject": "Сети", "teacher": "Григорьев Д.С.", "room": "120"}
+            ],
+            "Среда": [
+                {"time": "8:45-10:05", "subject": "Алгоритмы", "teacher": "Семенов К.Л.", "room": "215"},
+                {"time": "10:25-11:45", "subject": "ОС", "teacher": "Тихонов М.А.", "room": "320"},
+                {"time": "12:05-13:25", "subject": "Математика", "teacher": "Иванов И.И.", "room": "101"}
+            ],
+            "Четверг": [
+                {"time": "8:45-10:05", "subject": "Программирование", "teacher": "Сидоров П.К.", "room": "310"},
+                {"time": "10:25-11:45", "subject": "Физика", "teacher": "Петрова А.С.", "room": "205"},
+                {"time": "12:05-13:25", "subject": "Базы данных", "teacher": "Федоров С.М.", "room": "210"}
+            ],
+            "Пятница": [
+                {"time": "8:45-10:05", "subject": "Веб-разработка", "teacher": "Николаев А.П.", "room": "315"},
+                {"time": "10:25-11:45", "subject": "Сети", "teacher": "Григорьев Д.С.", "room": "120"},
+                {"time": "12:05-13:25", "subject": "Алгоритмы", "teacher": "Семенов К.Л.", "room": "215"}
+            ],
+            "Суббота": [
+                {"time": "8:45-10:00", "subject": "Физкультура", "teacher": "Орлов В.В.", "room": "Спортзал"},
+                {"time": "10:10-11:25", "subject": "Экономика", "teacher": "Зайцева О.Н.", "room": "125"}
+            ],
+            "Воскресенье": []
+        };
+
+        // Данные дежурных (пример)
+        const weekDuties = {
+            "Понедельник": ["Артюхов Савелий", "Бесков Артем", "Бисингалиев Рашид"],
+            "Вторник": ["Букварев Семен", "Грищенко Владислав", "Девятов Дариус"],
+            "Среда": ["Еремеев Александр", "Есин Богдан", "Закалюжный Дмитрий"],
+            "Четверг": ["Иванова Нинель", "Кочелаевский Владислав", "Курняев Артем"],
+            "Пятница": ["Малышко Никита", "Мамцева Елизавета", "Медведев Глеб"],
+            "Суббота": ["Потапов Максим", "Продан Владимир", "Рудас Владислав"],
+            "Воскресенье": []
+        };
+
         // Функции для вкладок
         function showTab(tabName) {
-            // Скрываем все вкладки
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.add('hidden');
-            });
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
             
-            // Убираем активный класс со всех кнопок
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            
-            // Показываем выбранную вкладку
             document.getElementById(tabName).classList.remove('hidden');
-            
-            // Активируем кнопку
             event.target.classList.add('active');
+            
+            // Обновляем данные при переключении вкладок
+            if (tabName === 'today') updateTodayTab();
+            if (tabName === 'week') updateWeekTab();
+            if (tabName === 'duty') updateDutyTab();
         }
-        
+
+        function updateTodayTab() {
+            const now = new Date();
+            const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+            const todayName = days[now.getDay()];
+            const todaySchedule = weekSchedule[todayName];
+            
+            document.getElementById('todayInfo').innerHTML = `
+                <strong>${todayName}</strong><br>
+                ${todayName === 'Воскресенье' ? '🎉 ВЫХОДНОЙ' : '📚 Учебный день'}
+            `;
+            
+            let scheduleHTML = '';
+            if (todayName === 'Воскресенье') {
+                scheduleHTML = '<div style="text-align: center; padding: 20px; color: #666;">🎉 Сегодня выходной! Отдыхаем</div>';
+            } else {
+                todaySchedule.forEach(lesson => {
+                    scheduleHTML += `
+                        <div class="schedule-item">
+                            <span class="time">${lesson.time}</span>
+                            <span class="subject">
+                                <strong>${lesson.subject}</strong><br>
+                                <small>${lesson.teacher} • ${lesson.room}</small>
+                            </span>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('todaySchedule').innerHTML = scheduleHTML;
+        }
+
+        function updateWeekTab() {
+            let weekHTML = '';
+            for (const [day, schedule] of Object.entries(weekSchedule)) {
+                if (day === 'Воскресенье') {
+                    weekHTML += `
+                        <div class="day-card sunday">
+                            <div class="day-header">
+                                <span>${day}</span>
+                                <span>🎉 ВЫХОДНОЙ</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    weekHTML += `
+                        <div class="day-card">
+                            <div class="day-header">
+                                <span>${day}</span>
+                                <span>${schedule.length} пар</span>
+                            </div>
+                            ${schedule.map(lesson => `
+                                <div style="font-size: 12px; margin: 5px 0;">
+                                    <strong>${lesson.time}</strong> - ${lesson.subject}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('weekSchedule').innerHTML = weekHTML;
+        }
+
+        function updateDutyTab() {
+            let dutyHTML = '';
+            for (const [day, duties] of Object.entries(weekDuties)) {
+                if (day === 'Воскресенье') {
+                    dutyHTML += `
+                        <div class="day-card sunday">
+                            <div class="day-header">
+                                <span>${day}</span>
+                                <span>🎉 ВЫХОДНОЙ</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    dutyHTML += `
+                        <div class="day-card">
+                            <div class="day-header">
+                                <span>${day}</span>
+                                <span>👥 ${duties.length} чел.</span>
+                            </div>
+                            ${duties.map(duty => `
+                                <div class="duty-item">${duty}</div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('weekDuties').innerHTML = dutyHTML;
+        }
+
         // Функции игр
         function playGuessGame() {
             const number = Math.floor(Math.random() * 10) + 1;
             alert(`🎯 Я загадал число от 1 до 10!\nПопробуй угадать!`);
         }
-        
+
         function rollDice() {
             const dice1 = Math.floor(Math.random() * 6) + 1;
             const dice2 = Math.floor(Math.random() * 6) + 1;
             alert(`🎲 Бросок костей:\nВыпало: ${dice1} и ${dice2}\nСумма: ${dice1 + dice2}`);
         }
-        
+
         function playRPS() {
             const choices = ['камень', 'ножницы', 'бумага'];
             const userChoice = prompt('Выбери: камень, ножницы или бумага');
@@ -309,25 +466,27 @@
                 alert('Пожалуйста, выбери: камень, ножницы или бумага');
             }
         }
-        
-        // Отправка данных в бота
-        function sendDataToBot(data) {
-            if (tg.sendData) {
-                tg.sendData(JSON.stringify(data));
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTodayTab();
+            updateWeekTab();
+            updateDutyTab();
+            
+            const user = tg.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('todayInfo').innerHTML += `<br><small>Привет, ${user.first_name}!</small>`;
             }
-        }
-        
-        // Показываем текущее время
+        });
+
         function updateTime() {
             const now = new Date();
             document.getElementById('status').textContent = 
-                `Обновлено: ${now.toLocaleTimeString()} • College Assistant v1.0`;
+                `Обновлено: ${now.toLocaleTimeString()} • College Assistant`;
         }
-        
+
         setInterval(updateTime, 60000);
         updateTime();
-        
-        console.log('Telegram Mini App loaded successfully!');
     </script>
 </body>
 </html>
