@@ -158,6 +158,23 @@
             color: white;
         }
         
+        .netcity-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+        
         .game-button {
             display: block;
             width: 100%;
@@ -175,7 +192,7 @@
             font-size: 14px;
         }
         
-        .game-button:hover {
+        .netcity-button:hover, .game-button:hover {
             transform: scale(1.02);
         }
         
@@ -190,6 +207,15 @@
             background: rgba(255,255,255,0.1);
             border-radius: 8px;
             font-size: 12px;
+        }
+        
+        .netcity-info {
+            background: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -206,7 +232,7 @@
             <button class="tab-button active" onclick="showTab('today')">📅 Сегодня</button>
             <button class="tab-button" onclick="showTab('week')">📋 Неделя</button>
             <button class="tab-button" onclick="showTab('duty')">👥 Дежурные</button>
-            <button class="tab-button" onclick="showTab('bells')">⏰ Звонки</button>
+            <button class="tab-button" onclick="showTab('netcity')">🌐 Сетевой</button>
             <button class="tab-button" onclick="showTab('games')">🎮 Игры</button>
         </div>
         
@@ -231,6 +257,24 @@
             <h2>👥 Дежурные на неделю</h2>
             <div id="weekDuties">
                 Загрузка дежурных...
+            </div>
+        </div>
+        
+        <!-- Вкладка Сетевой Город -->
+        <div id="netcity" class="card hidden">
+            <h2>🌐 Сетевой Город</h2>
+            <div class="netcity-info">
+                <strong>Быстрый доступ к:</strong>
+                <br>• Электронному дневнику
+                <br>• Расписанию занятий
+                <br>• Оценкам и успеваемости
+                <br>• Домашним заданиям
+            </div>
+            <button class="netcity-button" onclick="openNetCity()">
+                🌐 ОТКРЫТЬ СЕТЕВОЙ ГОРОД
+            </button>
+            <div style="text-align: center; margin-top: 10px; font-size: 12px; color: #666;">
+                Ссылка: https://spo.rso23.ru/security/#/login
             </div>
         </div>
         
@@ -270,7 +314,7 @@
         </div>
         
         <div class="status-bar" id="status">
-            College Assistant • Расписание на неделю
+            College Assistant • Сетевой город интегрирован
         </div>
     </div>
 
@@ -314,7 +358,7 @@
             "Воскресенье": []
         };
 
-        // Данные дежурных (пример)
+        // Данные дежурных
         const weekDuties = {
             "Понедельник": ["Артюхов Савелий", "Бесков Артем", "Бисингалиев Рашид"],
             "Вторник": ["Букварев Семен", "Грищенко Владислав", "Девятов Дариус"],
@@ -324,6 +368,12 @@
             "Суббота": ["Потапов Максим", "Продан Владимир", "Рудас Владислав"],
             "Воскресенье": []
         };
+
+        // Функция открытия Сетевого города
+        function openNetCity() {
+            const netcityUrl = "https://spo.rso23.ru/security/#/login";
+            window.open(netcityUrl, '_blank');
+        }
 
         // Функции для вкладок
         function showTab(tabName) {
